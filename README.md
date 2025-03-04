@@ -79,66 +79,106 @@ src/
 
 要添加新的项目，请按照以下步骤操作：
 
-1. 编辑 `src/data/mockData.ts` 文件，按照现有格式添加新的项目数据：
+1. 在 `src/data/projects/` 目录下创建新的项目配置文件，例如 `my-new-project.ts`：
 
 ```ts
-export const projects = [
-  // 现有项目...
-  {
-    id: 'new-project-id',
-    title: '新项目名称',
-    description: '新项目描述',
-    imageUrl: '/images/new-project.jpg', // 项目封面图片
-    modules: [
-      {
-        id: 'module-1',
-        title: '模块1',
-        pages: [
-          {
-            id: 'page-1-1',
-            title: '页面1',
-            description: '页面1描述',
-            componentPath: 'NewComponentName', // 对应原型组件的文件名（不含扩展名）
-          },
-          // 更多页面...
-        ],
-      },
-      // 更多模块...
-    ],
-  },
-];
+import { Project } from '@/types';
+
+const myNewProject: Project = {
+  id: 'my-new-project',
+  name: '我的新项目',
+  description: '新项目描述',
+  thumbnail: '/images/projects/my-new-project.jpg',
+  modules: [
+    {
+      id: 'module-1',
+      name: '模块1',
+      description: '模块1描述',
+      pages: [
+        {
+          id: 'page-1-1',
+          title: '页面1',
+          description: '页面1描述',
+          componentPath: 'MyNewPage1',
+        },
+        // 更多页面...
+      ],
+    },
+    // 更多模块...
+  ],
+};
+
+export default myNewProject;
 ```
 
-2. 如果需要，在 `public/images/` 目录下添加项目封面图片。
+2. 在 `src/data/projects/index.ts` 文件中导入并添加新项目：
+
+```ts
+import { Project } from '@/types';
+import videoGeneration from './video-generation';
+import campusFoodDelivery from './campus-food-delivery';
+import myNewProject from './my-new-project'; // 导入新项目
+
+// 所有项目的集合
+const projects: Project[] = [
+  videoGeneration,
+  campusFoodDelivery,
+  myNewProject, // 添加新项目
+  // 在这里添加更多项目...
+];
+
+export default projects;
+```
+
+3. 在 `public/images/projects/` 目录下添加项目封面图片。
 
 ## 添加新原型组件
 
-### 1. 确定项目类型
+### 1. 创建项目组件目录
 
-首先确定新组件属于哪个项目类型，目前支持的项目类型有：
+如果是新项目类型，在 `src/components/prototypes/` 目录下创建新的项目目录：
 
-- `video-generation`: 视频生成相关组件
-- `user-auth`: 用户认证相关组件
-- `product`: 产品相关组件
+```
+src/components/prototypes/my-new-project/
+```
 
-如果需要添加新的项目类型，需要修改 `src/components/PrototypeLoader.tsx` 文件中的 `getProjectType` 函数。
+### 2. 注册项目组件
 
-### 2. 创建组件文件
+在项目目录下创建 `index.ts` 文件，注册项目组件：
 
-在对应的项目类型目录下创建新的原型组件文件：
+```ts
+// src/components/prototypes/my-new-project/index.ts
+import { registerProjectComponents } from '@/utils/projectRegistry';
+
+// 项目组件列表
+const components = [
+  'MyNewPage1',
+  'MyNewPage2',
+  // 更多组件...
+];
+
+// 注册组件
+registerProjectComponents('my-new-project', components);
+
+export default components;
+```
+
+### 3. 创建组件文件
+
+在项目目录下创建组件文件：
 
 ```tsx
-// src/components/prototypes/[项目类型]/MyNewPrototype.tsx
+// src/components/prototypes/my-new-project/MyNewPage1.tsx
 'use client';
 
 import { useState } from 'react';
 
-export default function MyNewPrototype() {
+export default function MyNewPage1() {
   const [count, setCount] = useState(0);
 
   return (
     <div className="p-4">
-      <h2 className="text-xl font-bold mb-4">我的新原型</h2>
+      <h2 className="text-xl font-bold mb-4">我的新页面</h2>
       <p>当前计数: {count}</p>
       <button 
         className="mt-4 bg-blue-500 text-white px-4 py-2 rounded"
@@ -151,44 +191,18 @@ export default function MyNewPrototype() {
 }
 ```
 
-### 3. 更新 PrototypeLoader 组件（如需要）
+### 4. 导入项目组件注册文件
 
-如果添加了新的项目类型，需要更新 `src/components/PrototypeLoader.tsx` 文件中的 `getProjectType` 函数：
+在应用启动时导入项目组件注册文件，确保组件被正确注册。
+
+在 `src/app/layout.tsx` 或其他合适的地方导入：
 
 ```tsx
-const getProjectType = (componentName: string): string => {
-  // 现有项目类型...
-  
-  // 新项目类型组件
-  const newProjectTypeComponents = [
-    'NewComponent1',
-    'NewComponent2'
-  ];
-  
-  // 添加新的判断逻辑
-  if (newProjectTypeComponents.includes(componentName)) {
-    return 'new-project-type';
-  }
-  
-  // 默认返回空
-  return '';
-};
+// 导入项目组件注册
+import '@/components/prototypes/my-new-project';
 ```
 
-### 4. 在 mockData.ts 中引用新组件
-
-在 `src/data/mockData.ts` 文件中，将页面的 `componentPath` 设置为组件的文件名（不包含扩展名）：
-
-```ts
-{
-  id: 'page-x-x-x',
-  title: '我的新页面',
-  description: '这是一个新的原型页面',
-  componentPath: 'MyNewPrototype', // 只需提供文件名，不需要包含项目类型路径
-}
-```
-
-系统会根据 `componentPath` 自动确定项目类型并加载正确的组件。
+这样，系统就会自动加载和注册新项目的组件。
 
 ## 开发建议
 
@@ -206,3 +220,5 @@ MIT
 - 初始化项目原型的时候，请先完成1-3个页面即可，不易太多先让用户确认好样式和需求后再往下继续
 - 没完成一次编码后，提供用户1-3条建议，方便用户继续维护项目原型
 - 使用 unsplash 加载示例图片
+- 编写代码的时候注意项目属于PC还是APP，并且要观察同项目风格，防止出现风格不一致的页面
+- 框架如何变更了，请及时更新本文件 @README.md
