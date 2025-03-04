@@ -61,15 +61,25 @@ src/
 │   ├── PrototypeLoader.tsx # 原型加载器组件
 │   └── prototypes/       # 原型组件目录
 │       ├── video-generation/ # 视频生成项目原型
+│       │   ├── index.ts      # 组件注册文件
 │       │   ├── ScriptGenerationPage.tsx
 │       │   ├── ResourceListPage.tsx
 │       │   └── ...
-│       ├── user-auth/    # 用户认证项目原型
-│       │   ├── LoginPage.tsx
-│       │   └── RegisterPage.tsx
-│       └── product/      # 产品相关项目原型
-│           └── ProductListPage.tsx
+│       ├── campus-food-delivery/ # 校园外卖项目原型
+│       │   ├── index.ts      # 组件注册文件
+│       │   ├── HomePage.tsx
+│       │   ├── RestaurantDetailPage.tsx
+│       │   └── ...
+│       └── user-auth/    # 用户认证项目原型
+│           ├── index.ts      # 组件注册文件
+│           ├── LoginPage.tsx
+│           └── RegisterPage.tsx
 ├── data/                 # 数据文件
+│   ├── projects/         # 项目配置文件目录
+│   │   ├── index.ts      # 项目列表导出
+│   │   ├── video-generation.ts
+│   │   ├── campus-food-delivery.ts
+│   │   └── user-auth.ts
 │   └── mockData.ts       # 示例数据
 └── types/                # TypeScript 类型定义
     └── index.ts          # 类型定义文件
@@ -216,9 +226,10 @@ import '@/components/prototypes/my-new-project';
 
 MIT
 
-## 如果你在使用curosr编写代码请遵守如下规则
+## 如果你在使用`curosr`编写代码请遵守如下规则
 - 初始化项目原型的时候，请先完成1-3个页面即可，不易太多先让用户确认好样式和需求后再往下继续
 - 没完成一次编码后，提供用户1-3条建议，方便用户继续维护项目原型
-- 使用 unsplash 加载示例图片
+- 使用 `unsplash` 加载示例图片
 - 编写代码的时候注意项目属于PC还是APP，并且要观察同项目风格，防止出现风格不一致的页面
-- 框架如何变更了，请及时更新本文件 @README.md
+- 框架如何变更了，请及时更新本文件 `@README.md`
+- 其中`MCP`是非常重要的概念,主要用于`cursor`与外界进行交互(如：数据库等)，相关文档在项目根目录的 `@llms-full.txt`
